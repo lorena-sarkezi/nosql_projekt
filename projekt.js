@@ -178,10 +178,17 @@ const main = async () => {
         let frekvencija_HTRU_2 = [];
         frekvencija_HTRU_2.push((await frequency_0.toArray())[0]);
         frekvencija_HTRU_2.push((await frequency_1.toArray())[0]);
+
+        const frekvencijaCollection = database.collection("frekvencija_HTRU_2");
+        await frekvencijaCollection.insertMany(frekvencija_HTRU_2);
+
+        
         
         console.log("\n\n----------------------------------------------------------------\n\n");
         console.log("Frekvencija:")
         console.log(frekvencija_HTRU_2);
+
+        
     }
     finally {
         client.close();
