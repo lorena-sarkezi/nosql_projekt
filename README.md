@@ -1,3 +1,6 @@
+# Glavni file je projekt.js
+
+
 ## Priprema 
 * Instalirati NodeJs
 * Paziti da je Node ispravno dodan u path (pokušaj ukucati "node" ili "npm" u cmd)
