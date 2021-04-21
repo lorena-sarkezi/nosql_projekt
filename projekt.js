@@ -15,7 +15,7 @@ const main = async () => {
         const database = client.db("nosql");
         const csvDbCollection = database.collection("csvData");
         try{
-            await csvDbCollection.drop().catch(err);
+            await csvDbCollection.drop();
         }
         catch(err){
         }
@@ -78,7 +78,7 @@ const main = async () => {
             }
         });
 
-        const insertResult = await csvDbCollection.insertMany(parsedCsvObject);
+        await csvDbCollection.insertMany(parsedCsvObject);
 
         // 2. zadatak, prvi dio - srednje vrijednosti za sve kontinuirane varijable
         const avgResult = await csvDbCollection.aggregate(
