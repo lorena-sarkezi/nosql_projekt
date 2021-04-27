@@ -12,13 +12,15 @@ const main = async () => {
 
     try {
         await client.connect();
-        const database = client.db("nosql");
-        const csvDbCollection = database.collection("csvData");
         try{
-            await csvDbCollection.drop();
+            await client.db("nosql").dropDatabase();
         }
         catch(err){
         }
+
+        const database = client.db("nosql");
+        const csvDbCollection = database.collection("csvData");
+        
         
 
         const csvString = fs.readFileSync("./HTRU_2.csv", "utf-8");
@@ -188,7 +190,177 @@ const main = async () => {
         console.log("Frekvencija:")
         console.log(frekvencija_HTRU_2);
 
+
+        // 4. zadatak
+        // Svaki objekt statistike ima N property-ja, gdje je N broj kontinuiranih vrijednosti. Svaki property je array brojeva, odnosno vrijednosti iz originalnog seta podataka
+        // Property-ji objekata statistike sadržavaju odgovarajuće vrijednosti odgovarajućeg elementa (npr. profileMean) koji odgovara danom uvjetu
+
+        let statistika1_HTRU_2 = {
+            profileMean: [],
+            profileStdDeviation: [],
+            profileExcessKurtosis: [],
+            profileSkewness: [],
+            dmSnrCurveMean: [],
+            dmSnrCurveStdDeviation: [],
+            dmSnrCurveExcessKurtosis: [],
+            dmSnrCurveSkewness: []
+        };
+        let statistika2_HTRU_2 = {
+            profileMean: [],
+            profileStdDeviation: [],
+            profileExcessKurtosis: [],
+            profileSkewness: [],
+            dmSnrCurveMean: [],
+            dmSnrCurveStdDeviation: [],
+            dmSnrCurveExcessKurtosis: [],
+            dmSnrCurveSkewness: []
+        };
+
+        parsedCsvObject.forEach((element, index) => {
+            // profileMean
+            if(element.profileMean <= statistika_HTRU_2.Average_ProfileMean){
+                statistika1_HTRU_2.profileMean.push(element.profileMean);
+            }
+            else{
+                statistika2_HTRU_2.profileMean.push(element.profileMean);
+            }
+
+            // profileStdDeviation
+            if(element.profileStdDeviation <= statistika_HTRU_2.Average_ProfileStdDeviation){
+                statistika1_HTRU_2.profileStdDeviation.push(element.profileStdDeviation);
+            }
+            else{
+                statistika2_HTRU_2.profileStdDeviation.push(element.profileStdDeviation);
+            }
+
+            // profileExcessKurtosis
+            if(element.profileExcessKurtosis <= statistika_HTRU_2.Average_profileExcessKurtosis){
+                statistika1_HTRU_2.profileExcessKurtosis.push(element.profileExcessKurtosis);
+            }
+            else{
+                statistika2_HTRU_2.profileExcessKurtosis.push(element.profileExcessKurtosis);
+            }
+
+            // profileSkewness
+            if(element.profileSkewness <= statistika_HTRU_2.Average_profileSkewness){
+                statistika1_HTRU_2.profileSkewness.push(element.profileSkewness);
+            }
+            else{
+                statistika2_HTRU_2.profileSkewness.push(element.profileSkewness);
+            }
+
+            // dmSnrCurveMean
+            if(element.dmSnrCurveMean <= statistika_HTRU_2.Average_dmSnrCurveMean){
+                statistika1_HTRU_2.dmSnrCurveMean.push(element.dmSnrCurveMean);
+            }
+            else{
+                statistika2_HTRU_2.dmSnrCurveMean.push(element.dmSnrCurveMean);
+            }
+
+            // dmSnrCurveStdDeviation
+            if(element.dmSnrCurveStdDeviation <= statistika_HTRU_2.Average_dmSnrCurveStdDeviation){
+                statistika1_HTRU_2.dmSnrCurveStdDeviation.push(element.dmSnrCurveStdDeviation);
+            }
+            else{
+                statistika2_HTRU_2.dmSnrCurveStdDeviation.push(element.dmSnrCurveStdDeviation);
+            }
+
+            // dmSnrCurveExcessKurtosis
+            if(element.dmSnrCurveExcessKurtosis <= statistika_HTRU_2.Average_dmSnrCurveExcessKurtosis){
+                statistika1_HTRU_2.dmSnrCurveExcessKurtosis.push(element.dmSnrCurveExcessKurtosis);
+            }
+            else{
+                statistika2_HTRU_2.dmSnrCurveExcessKurtosis.push(element.dmSnrCurveExcessKurtosis);
+            }
+
+            // dmSnrCurveSkewness
+            if(element.dmSnrCurveSkewness <= statistika_HTRU_2.Average_dmSnrCurveSkewness){
+                statistika1_HTRU_2.dmSnrCurveSkewness.push(element.dmSnrCurveSkewness);
+            }
+            else{
+                statistika2_HTRU_2.dmSnrCurveSkewness.push(element.dmSnrCurveSkewness);
+            }
+        });
+
+        const statistika1Collection = database.collection("statistika1_HTRU_2");
+        await statistika1Collection.insertOne(statistika1_HTRU_2);
+
+        const statistika2Collection = database.collection("statistika2_HTRU_2");
+        await statistika2Collection.insertOne(statistika2_HTRU_2);
+
+
+        // 5. zadatak 
+        let emb_HTRU_2 = await csvDbCollection.find().toArray();
+    
+        emb_HTRU_2.forEach((element, index) => {
+            let tempclassVal = element.class;
+
+            if(element.class == 0){
+                element.class = {
+                    value: tempclassVal,
+                    frequency_emb: frekvencija_HTRU_2[0]._id
+                }
+            }
+            else if(element.class == 1){
+                element.class = {
+                    value: tempclassVal,
+                    frequency: frekvencija_HTRU_2[1]._id
+                }
+            }
+        });
+
+        const embCollection = database.collection("emb_HTRU_2");
+        await embCollection.insertMany(emb_HTRU_2);
+
+
+        // 6. zadatak
+        let emb2_HTRU_2 = await csvDbCollection.find().toArray();    
+
+        emb2_HTRU_2.forEach((element, index) => {
+            element.profileMean = {
+                value: element.profileMean,
+                statistics: statistika_HTRU_2._id
+            };
+
+            element.profileStdDeviation = {
+                value: element.profileStdDeviation,
+                statistics: statistika_HTRU_2._id
+            }
+
+            element.profileExcessKurtosis = {
+                value: element.profileExcessKurtosis,
+                statistics: statistika_HTRU_2._id
+            }
+
+            element.profileSkewness = {
+                value: element.profileSkewness,
+                statistics: statistika_HTRU_2._id
+            }
+
+            element.dmSnrCurveMean = {
+                value: element.dmSnrCurveMean,
+                statistics: statistika_HTRU_2._id
+            }
+
+            element.dmSnrCurveStdDeviation = {
+                value: element.dmSnrCurveStdDeviation,
+                statistics: statistika_HTRU_2._id
+            }
+
+            element.dmSnrCurveExcessKurtosis = {
+                value: element.dmSnrCurveExcessKurtosis,
+                statistics: statistika_HTRU_2._id
+            }
+
+            element.dmSnrCurveSkewness = {
+                value: element.dmSnrCurveSkewness,
+                statistics: statistika_HTRU_2._id
+            }
+        });
         
+        const emb2Collection = database.collection("emb2_HTRU_2");
+        await emb2Collection.insertMany(emb2_HTRU_2);
+
     }
     finally {
         client.close();
@@ -196,4 +368,4 @@ const main = async () => {
 }
 
 
-main().catch(console.dir);
+main().catch(console.log);
