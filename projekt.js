@@ -82,7 +82,7 @@ const main = async () => {
 
         await csvDbCollection.insertMany(parsedCsvObject);
 
-        // 2. zadatak, prvi dio - srednje vrijednosti za sve kontinuirane varijable
+        // 2. zadatak, prvi dio - srednje/prosječne vrijednosti za sve kontinuirane varijable
         const avgResult = await csvDbCollection.aggregate(
             [
                 {
@@ -295,13 +295,14 @@ const main = async () => {
         emb_HTRU_2.forEach((element, index) => {
             let tempclassVal = element.class;
 
+            //vrijednost moze biti samo 0 ili 1 za property "class"
             if(element.class == 0){
                 element.class = {
                     value: tempclassVal,
                     frequency_emb: frekvencija_HTRU_2[0]._id
                 }
             }
-            else if(element.class == 1){
+            else {
                 element.class = {
                     value: tempclassVal,
                     frequency: frekvencija_HTRU_2[1]._id
@@ -360,6 +361,23 @@ const main = async () => {
         
         const emb2Collection = database.collection("emb2_HTRU_2");
         await emb2Collection.insertMany(emb2_HTRU_2);
+
+
+        // 8. zadatak
+        csvDbCollection.createIndex({"class":1,"profileMean":-1});
+        const indexQuery = [
+            {
+                $match: {
+                    $and: [
+                            { class: { $eq: 0 } }, 
+                            { profileMean: { $gte: statistika_HTRU_2.statStdDeviation.StdDevSamp_ProfileMean } }
+                        ]
+                }
+            }
+        ];
+        const indexedCollectionResult = await csvDbCollection.aggregate(indexQuery).toArray();
+        const indexedCollection = database.collection("indexed_filtered");
+        await indexedCollection.insertMany(indexedCollectionResult);
 
     }
     finally {

@@ -1,7 +1,7 @@
 {
   "name": "lorena_sarkezi_nosql_projekt",
   "version": "1.0.0",
-  "description": "Projektni zadatak za kolegij NoSQL i napredna Big Data Analitika",
+  "description": "Projektni zadatak za kolegij \"NoSQL i napredna Big Data Analitika\" na TVZ-u",
   "scripts": {
     "start": "node projekt.js",
     "test": "echo \"Error: no test specified\" && exit 1"
